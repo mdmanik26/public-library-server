@@ -32,7 +32,7 @@ async function run() {
 
         const categoryCollection = client.db('publicLibrary').collection('categories')
         const booksCollection = client.db('publicLibrary').collection('allBooks')
-
+        const borrowedBooksCollection = client.db('publicLibrary').collection('borrowedBooks')
 
         app.get('/categories', async (req, res) => {
             const cursor = categoryCollection.find();
@@ -68,6 +68,30 @@ async function run() {
             const book = req.body
             const result = await booksCollection.insertOne(book)
             res.send(result)
+        })
+
+
+
+
+        app.put('/update/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatedBook = req.body;
+            console.log(updatedBook)
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+
+            const update = {
+                $set: {
+                    image: updatedBook.image,
+                    name: updatedBook.name,
+                    author: updatedBook.author,
+                    category: updatedBook.category,
+                    rating: updatedBook.rating
+                }
+            }
+            const result = await booksCollection.updateOne(filter, update, options);
+            res.send(result)
+
         })
 
 
