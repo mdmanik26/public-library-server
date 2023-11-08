@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
@@ -34,13 +34,21 @@ async function run() {
         const booksCollection = client.db('publicLibrary').collection('allBooks')
 
 
-        app.get('/categories', async(req, res)=>{
+        app.get('/categories', async (req, res) => {
             const cursor = categoryCollection.find();
             const result = await cursor.toArray();
             res.send(result)
         })
 
-        app.get('/books/:category', async(req, res)=>{
+
+        app.get('/book/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await booksCollection.findOne(query)
+            res.send(result)
+        })
+
+        app.get('/books/:category', async (req, res) => {
             const category = req.params.category;
             const query = { category: category };
             const result = await booksCollection.find(query).toArray();
@@ -48,7 +56,7 @@ async function run() {
         })
 
 
-        app.get('/allbooks', async(req, res)=>{
+        app.get('/allbooks', async (req, res) => {
             const cursor = booksCollection.find();
             const result = await cursor.toArray();
             res.send(result)
@@ -56,7 +64,7 @@ async function run() {
 
 
 
-        app.post('/addBooks', async(req, res)=>{
+        app.post('/addBooks', async (req, res) => {
             const book = req.body
             const result = await booksCollection.insertOne(book)
             res.send(result)
