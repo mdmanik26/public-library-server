@@ -63,6 +63,17 @@ async function run() {
         })
 
 
+        app.get('/borrowedBooks', async (req, res) => {
+            let query = {}
+            if (req.query?.email) {
+                query = {email : req.query.email}
+            }
+            const cursor = borrowedBooksCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result)
+        })
+
+
 
         app.post('/addBooks', async (req, res) => {
             const book = req.body
