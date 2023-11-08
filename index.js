@@ -31,12 +31,34 @@ async function run() {
         await client.connect();
 
         const categoryCollection = client.db('publicLibrary').collection('categories')
-
+        const booksCollection = client.db('publicLibrary').collection('allBooks')
 
 
         app.get('/categories', async(req, res)=>{
             const cursor = categoryCollection.find();
             const result = await cursor.toArray();
+            res.send(result)
+        })
+
+        app.get('/books/:category', async(req, res)=>{
+            const category = req.params.category;
+            const query = { category: category };
+            const result = await booksCollection.find(query).toArray();
+            res.send(result)
+        })
+
+
+        app.get('/allbooks', async(req, res)=>{
+            const cursor = booksCollection.find();
+            const result = await cursor.toArray();
+            res.send(result)
+        })
+
+
+
+        app.post('/addBooks', async(req, res)=>{
+            const book = req.body
+            const result = await booksCollection.insertOne(book)
             res.send(result)
         })
 
