@@ -70,6 +70,15 @@ async function run() {
             res.send(result)
         })
 
+        app.post('/borrowedBooks', async (req, res) => {
+            const book = req.body
+            const result = await borrowedBooksCollection.insertOne(book)
+            res.send(result)
+        })
+
+
+
+
 
 
 
